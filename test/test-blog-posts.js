@@ -122,8 +122,8 @@ function seedBlogPostData() {
           // and we'll assume it's true for rest
           resPost = res.body[0];
           console.log("ID OF RETERNED OBJECT", resPost.id);
-          //return BlogPost.findById(resPost.id);
-          return BlogPost.findById(resPost);
+          return BlogPost.findById(resPost.id);
+          //return BlogPost.findById(resPost);
         })
         .then(post => {
           resPost.title.should.equal(post.title);
