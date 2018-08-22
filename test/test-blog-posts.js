@@ -59,7 +59,7 @@ function seedBlogPostData() {
     });
   
 
-/// tear down DB working 
+      /// tear down DB working 
     function tearDownDb() {
         return new Promise((resolve, reject) => {
           console.warn('Deleting database');
@@ -71,17 +71,11 @@ function seedBlogPostData() {
 
 
 
-   // note the use of nested `describe` blocks.
-  // this allows us to make clearer, more discrete tests that focus
-  // on proving something small
+   
   describe('GET endpoint', function () {
 
     it('should return all existing posts', function () {
-      // strategy:
-      //    1. get back all posts returned by by GET request to `/blogposts`
-      //    2. prove res has right status, data type
-      //    3. prove the number of posts we got back is equal to number
-      //       in db.
+      
       let res;
       return chai.request(app)
         .get('/posts')
@@ -94,14 +88,13 @@ function seedBlogPostData() {
           return BlogPost.count();
         })
         .then(count => {
-          // the number of returned posts should be same
-          // as number of posts in DB
+          
          res.body.should.have.lengthOf(count);
         });
     });
 
     it('should return posts with right fields', function () {
-      // Strategy: Get back all posts, and ensure they have expected keys
+      
 
       let resPost;
       return chai.request(app)
@@ -118,12 +111,11 @@ function seedBlogPostData() {
             post.should.be.a('object');
             post.should.include.keys('title', 'content', 'author');
           });
-          // just check one of the posts that its values match with those in db
-          // and we'll assume it's true for rest
+          
           resPost = res.body[0];
           console.log("ID OF RETERNED OBJECT", resPost.id);
           return BlogPost.findById(resPost.id);
-          //return BlogPost.findById(resPost);
+          
         })
         .then(post => {
           resPost.title.should.equal(post.title);
@@ -133,15 +125,10 @@ function seedBlogPostData() {
     });
   });
 
-  })
 
-/*
- describe('POST endpoint', function () {
-    // strategy: make a POST request with data,
-    // then prove that the post we get back has
-    // right keys, and that `id` is there (which means
-    // the data was inserted into db)
-    it('should add a new blog post', function (done) {
+  describe('POST endpoint', function () {
+    
+    it('should add a new blog post', function () {
 
       const newPost = {
         title: faker.lorem.sentence(),
@@ -157,11 +144,12 @@ function seedBlogPostData() {
         .send(newPost)
         .then(function (res) {
           res.should.have.status(201);
-           res.should.be.json;
+          res.should.be.json;
           res.body.should.be.a('object');
           res.body.should.include.keys(
             'id', 'title', 'content', 'author', 'created');
           res.body.title.should.equal(newPost.title);
+          // cause Mongo should have created id on insertion
           res.body.id.should.not.be.null;
           res.body.author.should.equal(
             `${newPost.author.firstName} ${newPost.author.lastName}`);
@@ -173,24 +161,17 @@ function seedBlogPostData() {
           post.content.should.equal(newPost.content);
           post.author.firstName.should.equal(newPost.author.firstName);
           post.author.lastName.should.equal(newPost.author.lastName);
-          done();
         });
-        
     });
-    
   });
 
 
   describe('PUT endpoint', function () {
 
-    // strategy:
-    //  1. Get an existing post from db
-    //  2. Make a PUT request to update that post
-    //  4. Prove post in db is correctly updated
-    it('should update fields you send over', function (done) {
+    it('should update fields you send over', function () {
       const updateData = {
-        title: 'My blog post',
-        content: 'blahblahblahblahblahblahblahblahblahblah',
+        title: 'Oregon trails ',
+        content: 'kjskfsj skdjlfkjd kjsdlfj dhsdfkjhf ksjdlfjdl',
         author: {
           firstName: 'Jack',
           lastName: 'London'
@@ -215,60 +196,16 @@ function seedBlogPostData() {
           post.content.should.equal(updateData.content);
           post.author.firstName.should.equal(updateData.author.firstName);
           post.author.lastName.should.equal(updateData.author.lastName);
-          done();
         });
-       
     });
-    
   });
 
 
 
-  describe('DELETE endpoint', function () {
-    // strategy:
-    //  1. get a post
-    //  2. make a DELETE request for that post's id
-    //  3. assert that response has right status code
-    //  4. prove that post with the id doesn't exist in db anymore
-    it('should delete a post by id', function (done) {
-
-      let post;
-      //console.log(BlogPost.findOne());
-      return BlogPost
-        .findOne()
-        .then(bpost => {
-          post = bpost;
-          console.log(post.id);
-          return chai.request(app).delete(`/posts/${post.id}`);
-        })
-        .then(res => {
-          res.should.have.status(204);
-          return BlogPost.findById(post.id);
-        })
-        .then(bpost => {
-          // when a variable's value is null, chaining `should`
-          // doesn't work. so `_post.should.be.null` would raise
-          // an error. `should.be.null(_post)` is how we can
-          // make assertions about a null value.
-          should.not.exist(bpost)
-          .then(done, done);
-         done();
-        }).catch(done);;
-      
-    });
-
-    
-    
-  });
-  */
 
   describe('DELETE endpoint', function() {
-    // strategy:
-    //  1. get a blogpost
-    //  2. make a DELETE request for that blogpost's id
-    //  3. assert that response has right status code
-    //  4. prove that blogpost with the id doesn't exist in db anymore
-    it('delete a blog by id', function(done) {
+    
+    it('delete a blog by id', function() {
 
       let blogpost;
 
@@ -276,7 +213,7 @@ function seedBlogPostData() {
         .findOne()
         .then(function(_blogpost) {
           blogpost = _blogpost;
-          return chai.request(app).delete(`/blogposts/${blogpost.id}`);
+          return chai.request(app).delete(`/posts/${blogpost.id}`);
         })
         .then(function(res) {
           expect(res).to.have.status(204);
@@ -284,10 +221,11 @@ function seedBlogPostData() {
         })
         .then(function(_blogpost) {
           expect(_blogpost).to.be.null;   //// should.not.exist(bpost)
-          done();
+         
         });
        
     });
     
   });
 
+})
