@@ -222,30 +222,30 @@ function seedBlogPostData() {
     
   });
 
-*/
 
-  describe('DELETE endpoint', function (done) {
+
+  describe('DELETE endpoint', function () {
     // strategy:
     //  1. get a post
     //  2. make a DELETE request for that post's id
     //  3. assert that response has right status code
     //  4. prove that post with the id doesn't exist in db anymore
-    it('should delete a post by id', function () {
+    it('should delete a post by id', function (done) {
 
       let post;
       //console.log(BlogPost.findOne());
       return BlogPost
         .findOne()
         .then(bpost => {
-          post =bpost;
-          console.log(post);
+          post = bpost;
+          console.log(post.id);
           return chai.request(app).delete(`/posts/${post.id}`);
         })
         .then(res => {
           res.should.have.status(204);
           return BlogPost.findById(post.id);
         })
-        .then(bppost => {
+        .then(bpost => {
           // when a variable's value is null, chaining `should`
           // doesn't work. so `_post.should.be.null` would raise
           // an error. `should.be.null(_post)` is how we can
@@ -260,3 +260,34 @@ function seedBlogPostData() {
     
     
   });
+  */
+
+  describe('DELETE endpoint', function() {
+    // strategy:
+    //  1. get a blogpost
+    //  2. make a DELETE request for that blogpost's id
+    //  3. assert that response has right status code
+    //  4. prove that blogpost with the id doesn't exist in db anymore
+    it('delete a blog by id', function(done) {
+
+      let blogpost;
+
+      return BlogPost
+        .findOne()
+        .then(function(_blogpost) {
+          blogpost = _blogpost;
+          return chai.request(app).delete(`/blogposts/${blogpost.id}`);
+        })
+        .then(function(res) {
+          expect(res).to.have.status(204);
+          return BlogPost.findById(blogpost.id);
+        })
+        .then(function(_blogpost) {
+          expect(_blogpost).to.be.null;   //// should.not.exist(bpost)
+          done();
+        });
+       
+    });
+    
+  });
+
